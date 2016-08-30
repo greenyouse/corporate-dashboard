@@ -194,7 +194,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- responsive table idea inspired by
          http://codepen.io/zavoloklom/pen/IGkDz -->
-    <section hidden="[[!dataLoaded]]">
+    <section hidden$="[[!dataLoaded]]">
       <table>
         <thead id="headers">
           <tr>
@@ -219,8 +219,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </tbody>
       </table>
     </section>
-
-    <paper-spinner hidden="[[dataLoaded]]"></paper-spinner>
 
     <report-data headers="{{headers}}" lines="{{reports}}" file-name="{{dataFile}}"></report-data>
 

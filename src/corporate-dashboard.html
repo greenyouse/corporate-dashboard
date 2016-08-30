@@ -14,6 +14,10 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="my-icons.html">
+<link rel="import" href="login-page.html">
+<link rel="import" href="key-metrics.html">
+<link rel="import" href="data-view.html">
+<link rel="import" href="office-view.html">
 
 <dom-module id="corporate-dashboard">
 
@@ -125,7 +129,7 @@
 
     <firebase-auth
         id="auth"
-        hidden="[[signedIn]]"
+        hidden$="[[signedIn]]"
         app-name="corporate-dashboard"
         provider="[[authProvider]]"
         signed-in="{{signedIn}}"
@@ -141,6 +145,9 @@
       is: 'corporate-dashboard',
 
       properties: {
+
+        routeData: Object,
+        subroute: Object,
 
         page: {
           type: String,
