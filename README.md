@@ -17,8 +17,6 @@ Here are some of the features it has:
 
 ## Try It Out
 
-The live version is [hosted here](https://greenyouse.github.com/corporate-dashboard).
-
 To run the app locally, first make sure you have polymer-cli:
 
 ```sh
