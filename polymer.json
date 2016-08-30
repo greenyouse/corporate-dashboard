@@ -1,9 +1,0 @@
-{
-  "entrypoint": "index.html",
-  "shell": "src/corporate-dashboard.html",
-  "fragments": [
-    "src/key-metrics.html",
-    "src/data-view.html",
-    "src/office-view.html"
-  ]
-}
