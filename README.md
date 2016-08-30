@@ -29,7 +29,7 @@ Then clone and build the app:
 
 ```
 git clone https://github.com/greenyouse/corporate-dashboard
-cd restaurant-reviewer
+cd corporate-dashboard
 polymer build
 ```
 
