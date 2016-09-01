@@ -39,7 +39,7 @@
       <h1>Office Locations</h1>
       <br>
       <google-map api-key='AIzaSyBkHxZZzchmvczNvUWMznd0DicwOWZ9dSE' fit-to-markers="true">
-        <template is="dom-repeat" items="[[officeData]]" as="office">
+        <template id="officeMarkers" is="dom-repeat" items="[[officeData]]" as="office">
           <google-map-marker latitude="[[office.coords.lat]]"
                              longitude="[[office.coords.lng]]"
                              title="[[office.office]]">
@@ -74,7 +74,6 @@
         window.setInterval(function() {
           var files = ["/data/offices-1.json", "/data/offices-2.json"];
           _this1.dataFile == files[0] ? _this1.dataFile = files[1] : _this1.dataFile = files[0];
-          console.log(_this1.dataFile);
         }, 5000);
       }
     });

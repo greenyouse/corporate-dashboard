@@ -5,5 +5,16 @@
     "src/key-metrics.html",
     "src/data-view.html",
     "src/office-view.html"
+  ],
+  "sourceGlobs": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json",
+    "data/**/*",
+    "bower_components/moment/min/moment.min.js"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

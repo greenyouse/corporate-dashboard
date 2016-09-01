@@ -97,7 +97,7 @@
     <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
     <iron-media-query query="max-width: 1023px" query-matches="{{mediumScreen}}"></iron-media-query>
 
-    <div class="flex layout wrap horizontal justified">
+    <div class="flex layout wrap horizontal">
       <div>
         <section hidden="[[!dataLoaded]]">
           <div class="card active">
@@ -219,8 +219,15 @@
          observer: "_resizeCharts"
        },
 
-       reportFile: String,
-       custFile: String
+       reportFile: {
+         type: String,
+         value: "/data/reports-1.csv"
+       },
+
+       custFile: {
+         type: String,
+         value: "/data/customers-2.csv"
+       }
      },
 
      observers: [
