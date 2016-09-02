@@ -1,0 +1,141 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="report-data.html">
+
+</head><body><dom-module id="key-metrics">
+
+  <template>
+
+    <style>
+     :host {
+         display: block;
+         padding: 10px;
+         --gutter-width: 15em;
+         --element-height: 10em;
+         --element-width: calc(var(--gutter-width) - 5em);
+     }
+
+     .flex {
+         display: flex;
+         flex-direction: row;
+         flex-wrap: wrap;
+         justify-content: space-between;
+     }
+
+     .flex > * {
+         flex: 1 1 auto;
+     }
+
+     h3, h4 {
+         color: black;
+     }
+
+     .card {
+         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+         padding: 16px;
+         margin: 24px;
+         border-radius: 5px;
+         background-color: #fff;
+         color: #757575;
+     }
+
+     .active {
+         width: var(--element-width);
+     }
+
+     .controlBar {
+         height: calc(var(--element-height) * 2);
+         max-width: 40em;
+     }
+
+     *[hidden] {
+         display: hidden;
+     }
+
+     google-chart {
+         height: calc(var(--element-height) * 2);
+         width: calc(var(--element-width) * 2);
+     }
+
+     @media screen and (min-width: 768px) {
+         .active {
+             width: calc(var(--element-width) + 15);;
+         }
+
+         .controlBar {
+             height: calc(var(--element-height) + 5em);
+         }
+
+         google-chart {
+             height: calc(var(--element-height) + 5em);
+             width: calc(var(--element-width) + 15em);;
+         }
+     }
+
+     @media screen and (min-width: 1024px) {
+         .active {
+             width: calc(var(--element-width) + 30em);;
+         }
+
+         .controlBar {
+             height: calc(var(--element-height) + 10em);
+         }
+
+         google-chart {
+             height: calc(var(--element-height) + 10em);
+             width: calc(var(--element-width) + 30em);;
+         }
+     }
+    </style>
+
+    
+    <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+    <iron-media-query query="max-width: 1023px" query-matches="{{mediumScreen}}"></iron-media-query>
+
+    <div class="flex layout wrap horizontal">
+      <div>
+        <section hidden="[[!dataLoaded]]">
+          <div class="card active">
+            <span><h4>Active Issues: [[openIssues]]</h4></span>
+          </div>
+
+          <br>
+
+          <google-chart type="line" id="customerChart" options="[[lineOpts]]" cols="[{&quot;label&quot;: &quot;Month&quot;, &quot;type&quot;: &quot;date&quot;}, {&quot;label&quot;: &quot;Customers&quot;, &quot;type&quot;: &quot;number&quot;}]" rows="[[payingCustomers]]">
+          </google-chart>
+
+          <br>
+
+          <google-chart type="column" id="issueChart" options="[[columnOpts]]" cols="[{&quot;label&quot;: &quot;Month&quot;, &quot;type&quot;: &quot;date&quot;}, {&quot;label&quot;: &quot;Reports&quot;, &quot;type&quot;: &quot;number&quot;}]" rows="[[issuesReported]]">
+          </google-chart>
+        </section>
+
+        <paper-spinner hidden="[[dataLoaded]]"></paper-spinner>
+      </div>
+
+      <div class="card controlBar">
+        <h3>Controls</h3>
+        <paper-input value="{{startDate}}" auto-validate="" min="2015-01-01" type="date" error-message="Start date should be after 1/1/2015" label="Start Date">
+        </paper-input>
+        <paper-input value="{{endDate}}" auto-validate="" max="2016-08-01" type="date" error-message="End date should be before 1/1/2015" label="End Date">
+        </paper-input>
+        <br>
+        <p>valid dates are 01/01/2015 to 08/01/2016</p>
+      </div>
+    </div>
+
+    
+    <report-data lines="{{reports}}" file-name="{{reportFile}}"></report-data>
+    <report-data lines="{{customers}}" file-name="{{custFile}}"></report-data>
+
+  </template>
+
+  <script>Polymer({is:"key-metrics",properties:{reports:{type:Array},customers:{type:Array},dataLoaded:{type:Boolean,value:!1},openIssues:{type:Number},payingCustomers:{type:Array},issuesReported:{type:Array},startDate:{type:Number,value:function(){return moment().subtract(1,"year")}},endDate:{type:Number,value:function(){return moment()}},lineOpts:{},columnOpts:{},smallScreen:{type:Boolean,observer:"_resizeCharts"},mediumScreen:{type:Boolean,observer:"_resizeCharts"},active:{type:Boolean,observer:"_resizeCharts"},reportFile:{type:String,value:"/data/reports-1.csv"},custFile:{type:String,value:"/data/customers-2.csv"}},observers:["_isLoaded(reports, customers)","countAllOpenIssues(reports, startDate, endDate)","activeUserCount(customers, startDate, endDate)","openReportsCount(reports, startDate, endDate)","setLineOpts(startDate, endDate)","setColOpts(startDate, endDate)"],ready:function(){var e=this;window.setInterval(function(){var t=["/data/reports-1.csv","/data/reports-2.csv"],r=["/data/customers-1.csv","/data/customers-2.csv"];e.reportFile==t[0]?e.reportFile=t[1]:e.reportFile=t[0],e.custFile==r[0]?e.custFile=r[1]:e.custFile=r[0]},5e3)},_isLoaded:function(e,t){Array.isArray(t)&&Array.isArray(e)&&(this.dataLoaded=!0)},_resizeCharts:function(){var e=this.$.customerChart,t=this.$.issueChart;e.redraw(),t.redraw()},countAllOpenIssues:function(e,t,r){var s=e.filter(function(e){var s=new Date(e[0]);return"open"===e[4]&&moment(s).isBetween(t,r)});this.openIssues=s.length},monthsObj:function(){for(var e=[2015,2016],t=12,r={},s=0;s<e.length;s++)for(var a=1;a<=t;a++){var n=e[s]+" "+a,o=moment(n,"YYYY MM");r[o]=0}return r},computeRecords:function(e,t,r){if(Array.isArray(e)){var s=this.monthsObj();dates=e.filter(function(e){var s=new Date(e[0]);return moment(s).isBetween(t,r)}).reduce(function(e,t,r){var t=moment(t[0]).format("YYYY-MM"),s=moment(t,"YYYY-MM");return e[s]+=1,e},s);for(var a=Object.keys(dates),n=[],o=0;o<a.length;o++){var i=dates[a[o]],u=new Date(a[o]);n.push([u,i])}return n}},activeUserCount:function(e,t,r){this.payingCustomers=this.computeRecords(e,t,r)},openReportsCount:function(e,t,r){this.issuesReported=this.computeRecords(e,t,r)},setLineOpts:function(e,t){this.lineOpts={title:"Paying Customers",hAxis:{viewWindow:{min:new Date(e),max:new Date(t)}}}},setColOpts:function(e,t){this.columnOpts={title:"Issues Reported",hAxis:{viewWindow:{min:new Date(e),max:new Date(t)}}}}});</script>
+
+</dom-module>
+</body></html>

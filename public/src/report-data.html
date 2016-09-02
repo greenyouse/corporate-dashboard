@@ -1,0 +1,8 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="report-data">
+
+  <script>Polymer({is:"report-data",properties:{headers:{type:Array,notify:!0},lines:{type:Array,notify:!0},data:{type:Array,notify:!0},fileName:{type:String}},observers:["_fetchData(fileName)"],_parseCSV:function(e){var t=this;e.text().then(function(e){var r=e.split("\n");r.splice(-1),t.headers=r.splice(0,1)[0].split(","),t.lines=r.map(function(e){return e.split(",")})})},_parseJSON:function(e){var t=this;e.json().then(function(e){t.data=e})},_fetchData:function(e){var t=/\.csv$/i,r=/\.json$/i,n=this;fetch(e).then(function(a){switch(!0){case t.test(e):n._parseCSV(a);break;case r.test(e):n._parseJSON(a);break;default:console.log("file format for "+e+" not supported")}},function(e){console.log("file fetching error ",e)})}});</script>
+
+</dom-module>
+</body></html>

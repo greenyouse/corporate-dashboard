@@ -1,0 +1,206 @@
+<html><head><link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="report-data.html">
+<link rel="import" href="my-icons.html">
+
+</head><body><dom-module id="data-view">
+
+  <template>
+
+    <style>
+     :host {
+         display: block;
+         padding: 10px;
+     }
+
+     .card {
+         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+         padding: 16px;
+         margin: 24px;
+         border-radius: 5px;
+         background-color: #fff;
+         color: black;
+         max-width: 60em;
+     }
+
+     *[hidden] {
+         display: none;
+     }
+
+     paper-input {
+         max-width: 100%;
+         width: 15em;
+     }
+
+     .menu_controls {
+         display: flex;
+         flex-flow: row wrap;
+     }
+
+     paper-icon-button {
+         color: black;
+     }
+
+     paper-button {
+         border-radius: 10px;
+         height: 2.5em
+     }
+
+     paper-dropdown-menu {
+         margin-right: 1em;
+     }
+
+     @media screen and (max-width: 1299px) {
+         thead {
+             display: none;
+         }
+
+         tr {
+             display: flex;
+             flex-flow: column wrap;
+             margin: 0.1em;
+             margin-bottom: 1.5em;
+             border-radius: 5px;
+             box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+             padding: 1em;
+             background-color: #fff;
+         }
+
+         td::before {
+             content: attr(data-label);
+             float: left;
+             font-weight: 600;
+             margin-right: 5em;
+         }
+
+         td {
+             text-align: right;
+         }
+     }
+
+     @media screen and (min-width: 1300px) {
+         .mobile {
+             display: none;
+         }
+
+         table {
+             background-color: #fff;
+             max-width: 100%;
+             margin-bottom: 2rem;
+             border-spacing: 0;
+             border-collapse: collapse;
+             border-radius: 5px;
+             color: #212121;
+         }
+
+         thead > tr {
+             border-bottom: solid #757575 1px;
+         }
+
+         th {
+             color: black;
+         }
+
+         th, td {
+             padding: 1em;
+             text-align: left;
+         }
+
+         tbody > tr {
+             border-bottom: solid lightgrey 1px;
+         }
+
+         .menu_controls > paper-dropdown-menu,
+         .menu_controls > paper-input {
+             flex: 1 1 auto;
+         }
+
+         .menu_controls > paper-button {
+             flex: 0 0 auto;
+         }
+
+     }
+    </style>
+
+    <section class="card">
+      <h2>Filters:</h2>
+      <div id="filtersList"></div>
+      <template is="dom-repeat" items="[[filters]]" as="filter">
+        <span>
+          <p>name: [[filter.field]], value: [[filter.text]]
+            <paper-icon-button icon="clear" raised="" on-tap="removeFilter">
+            </paper-icon-button>
+          </p>
+        </span>
+      </template>
+      <br>
+
+      <div class="menu_controls">
+        <paper-dropdown-menu selected-item-label="{{newFilter.field}}" horizontal-align="left" label="Filter Field">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[headers]]" as="header">
+              <paper-item>[[header]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-input type="search" id="filterInput" value="{{newFilter.text}}" label="Filter Text">
+        </paper-input>
+        <paper-button raised="" on-tap="addFilter">
+          <iron-icon icon="add"></iron-icon>
+        </paper-button>
+      </div>
+      <br>
+
+      <div class="menu_controls">
+        <paper-dropdown-menu class="mobile" selected-item-label="{{currentField.field}}" horizontal-align="left" label="Sort Field">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[headers]]" as="header">
+              <paper-item on-tap="mobileSort">[[header]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-toggle-button class="mobile" checked="{{currentField.descending}}" on-tap="mobileSort">Ascending/Descending</paper-toggle-button>
+      </div>
+    </section>
+
+    
+    <section hidden$="[[!dataLoaded]]">
+      <table>
+        <thead id="headers">
+          <tr>
+            <template is="dom-repeat" items="[[headers]]" as="header">
+              <th id="[[header]]">[[header]]</th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <template id="reportTable" is="dom-repeat" items="[[tableRows]]" as="rec">
+            <tr>
+              <td data-label="submittedAt">[[rec.submittedAt]]</td>
+              <td data-label="customerName">[[rec.customerName]]</td>
+              <td data-label="customerEmail">[[rec.customerEmail]]</td>
+              <td data-label="description">[[rec.description]]</td>
+              <td data-label="status">[[rec.status]]</td>
+              <td data-label="closedAt">[[rec.closedAt]]</td>
+              <td data-label="employee">[[rec.employee]]</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </section>
+
+    <report-data headers="{{headers}}" lines="{{reports}}" file-name="{{dataFile}}"></report-data>
+
+  </template>
+
+  <script>Polymer({is:"data-view",properties:{reports:{type:Array},dataLoaded:{type:Boolean,value:!1},headers:{type:Array},reportData:{type:Array},tableRows:Array,currentField:{type:Object,value:function(){return{field:"",descending:!0}}},filters:{type:Array,value:function(){return[]}},newFilter:{type:Object,value:function(){return{field:"",text:""}}},showFilters:Boolean,dataFile:{type:String,value:"/data/reports-1.csv"}},listeners:{"headers.tap":"desktopSort"},observers:["_isLoaded(headers, reports)","_fillFields(headers, reports)","_showFilters(filters)","_updateTable(reports)"],ready:function(){var t=this;window.setInterval(function(){var e=["/data/reports-1.csv","/data/reports-2.csv"];t.dataFile==e[0]?t.dataFile=e[1]:t.dataFile=e[0]},5e3)},_updateTable:function(){var t=this.currentField.field,e=this.currentField.descending;this._sortRows(t,e),this.filterRows(this.filters)},_isLoaded:function(t,e){Array.isArray(t)&&Array.isArray(e)&&(this.dataLoaded=!0)},_fillFields:function(t,e){this.reportData=e.map(function(e){for(var r={},i=0;i<t.length;i++){var s=t[i],a=e[i];r[s]=a}return r}),this.tableRows=this.reportData},_compare:function(t,e,r){return e[t]&&(e=e[t].toLowerCase()),r[t]&&(r=r[t].toLowerCase()),e>r?1:e<r?-1:0},_sortRows:function(t,e){function r(r,s){return e?i._compare(t,s,r):i._compare(t,r,s)}var i=this,s=this.tableRows;this.tableRows=s.sort(r),this.$.reportTable.render()},desktopSort:function(t){var e=t.detail.sourceEvent.target.id,r=this.currentField.descending;this.currentField.field==e&&(r=!r),this.currentField={field:e,descending:r},this._sortRows(e,r)},mobileSort:function(){var t=this.currentField.field,e=this.currentField.descending;this._sortRows(t,e)},_showFilters:function(t){this.showFilters=t.length>0},addFilter:function(){if(""!=this.newFilter.field&&""!=this.newFilter.text){var t=this.newFilter.field,e=this.newFilter.text,r={field:t,text:e};this.push("filters",r),this.$.filterInput.value="",this._showFilters(this.filters),this.filterRows(this.filters)}},removeFilter:function(t){var e=t.model.__data__.filter,r=this.filters.filter(function(t){if(e!=t)return t});this.set("filters",r),this.filterRows(this.filters)},filterRows:function(t){var e=this.reportData;t.map(function(t){var r=t.text,i=t.field;e=e.filter(function(t){var e=t[i];if(e.indexOf(r)>-1)return t})}),this.tableRows=e}});</script>
+
+</dom-module>
+</body></html>
