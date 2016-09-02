@@ -18,6 +18,8 @@ Here are some of the features it has:
 
 ## Try It Out
 
+The live version is [hosted here](https://udacity-dashboard-83248.firebaseapp.com/).
+
 To run the app locally, first make sure you have polymer-cli:
 
 ```sh
