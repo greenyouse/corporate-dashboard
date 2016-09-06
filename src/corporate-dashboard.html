@@ -7,7 +7,6 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
@@ -111,9 +110,6 @@
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <login-page name="login-page"
-                      on-sign-in="signIn"
-                      signed-in="[[signedIn]]"></login-page>
           <key-metrics name="key-metrics" active="[[metricsActive]]"></key-metrics>
           <data-view name="data-view"></data-view>
           <office-view name="office-view"></office-view>
@@ -122,15 +118,6 @@
       </app-header-layout>
 
     </app-drawer-layout>
-
-    <firebase-auth
-        id="auth"
-        hidden$="[[signedIn]]"
-        app-name="corporate-dashboard"
-        provider="[[authProvider]]"
-        signed-in="{{signedIn}}"
-        user="{{user}}">
-    </firebase-auth>
 
   </template>
 
@@ -154,21 +141,6 @@
         metricsActive: {
           type: Boolean,
           notify: true
-        },
-
-        signedIn: {
-          type: Boolean,
-          observer: "loginDone",
-          value: false
-        },
-
-        user: Object,
-
-        authProvider: {
-          type: String,
-          value: function() {
-            return "google";
-          }
         }
       },
 
@@ -177,10 +149,6 @@
       ],
 
       _routePageChanged: function(page) {
-        // redirect to the login page when not logged in
-        if (this.signedIn != true)
-          return this.page = 'login-page';
-
         this.page = page || 'key-metrics';
       },
 
@@ -188,22 +156,6 @@
         // load page import on demand.
         this.importHref(
           this.resolveUrl(page + '.html'), null, null, true);
-      },
-
-      // NOTE: just using anonymous sign in here instead
-      signIn: function() {
-        /* this.$.auth.signInWithPopup(); */
-        this.$.auth.signInAnonymously();
-      },
-
-      loginError: function(e) {
-        console.log("error logging in: ", e);
-      },
-
-      loginDone: function() {
-        if (!this.route) return;
-        this.set('route.path', '/key-metrics');
-        this.page = "key-metrics";
       }
 
     });
