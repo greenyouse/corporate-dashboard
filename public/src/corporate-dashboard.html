@@ -7,7 +7,6 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
@@ -107,7 +106,6 @@
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <login-page name="login-page" on-sign-in="signIn" signed-in="[[signedIn]]"></login-page>
           <key-metrics name="key-metrics" active="[[metricsActive]]"></key-metrics>
           <data-view name="data-view"></data-view>
           <office-view name="office-view"></office-view>
@@ -117,12 +115,9 @@
 
     </app-drawer-layout>
 
-    <firebase-auth id="auth" hidden$="[[signedIn]]" app-name="corporate-dashboard" provider="[[authProvider]]" signed-in="{{signedIn}}" user="{{user}}">
-    </firebase-auth>
-
   </template>
 
-  <script>Polymer({is:"corporate-dashboard",properties:{routeData:Object,subroute:Object,page:{type:String,reflectToAttribute:!0,observer:"_pageChanged"},metricsActive:{type:Boolean,notify:!0},signedIn:{type:Boolean,observer:"loginDone",value:!1},user:Object,authProvider:{type:String,value:function(){return"google"}}},observers:["_routePageChanged(routeData.page)"],_routePageChanged:function(e){return 1!=this.signedIn?this.page="login-page":void(this.page=e||"key-metrics")},_pageChanged:function(e){this.importHref(this.resolveUrl(e+".html"),null,null,!0)},signIn:function(){this.$.auth.signInAnonymously()},loginError:function(e){console.log("error logging in: ",e)},loginDone:function(){this.route&&(this.set("route.path","/key-metrics"),this.page="key-metrics")}});</script>
+  <script>Polymer({is:"corporate-dashboard",properties:{routeData:Object,subroute:Object,page:{type:String,reflectToAttribute:!0,observer:"_pageChanged"},metricsActive:{type:Boolean,notify:!0}},observers:["_routePageChanged(routeData.page)"],_routePageChanged:function(e){this.page=e||"key-metrics"},_pageChanged:function(e){this.importHref(this.resolveUrl(e+".html"),null,null,!0)}});</script>
 
 </dom-module>
 </body></html>

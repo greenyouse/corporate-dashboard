@@ -1,5 +1,6 @@
 <html><head><link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -150,6 +151,7 @@
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
+        <iron-a11y-keys target="[[filterInput]]" keys="enter" on-keys-pressed="addFilter"></iron-a11y-keys>
         <paper-input type="search" id="filterInput" value="{{newFilter.text}}" label="Filter Text">
         </paper-input>
         <paper-button raised="" on-tap="addFilter">
