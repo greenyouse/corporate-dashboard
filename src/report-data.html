@@ -7,91 +7,74 @@
      is: 'report-data',
 
      properties: {
-       appData: {
-         type: Object,
+       offices: {
+         type: Array,
          notify: true,
          value: function() {
-           return {
-             offices: [],
-             headers: [],
-             reports: [],
-             customers: [],
-           }
+           return [];
+         }
+       },
+
+       headers: {
+         type: Array,
+         notify: true,
+         value: function() {
+           return [];
+         }
+       },
+
+       reports: {
+         type: Array,
+         notify: true,
+         value: function() {
+           return [];
+         }
+       },
+
+       customers: {
+         type: Array,
+         notify: true,
+         value: function() {
+           return [];
          }
        }
      },
 
-     /* observers: [
-        '_fetchData(fileName)'
-        ],
-      */
-     _parseCSV: function (resp, topic) {
-       var _this1 = this;
+     _parseCSV: function (topic, csv) {
+       var rows = csv.split("\n");
+       // last row is a "" line, removing it here
+       rows.splice(-1);
 
-       resp.text().then(function (csv) {
-         var rows = csv.split("\n");
-         // last row is a "" line, removing it here
-         rows.splice(-1);
+       this.headers = rows.splice(0,1)[0].split(",");
 
-         _this1.appData.headers = rows.splice(0,1)[0].split(",");
-
-         var lines = rows.map(function (row) {
-           return row.split(",");
-         });
-
-         _this1.appData[topic] = lines;
+       var lines = rows.map(function (row) {
+         return row.split(",");
        });
-     },
 
-     _parseJSON: function (resp) {
-       var _this1 = this;
-
-       resp.json().then(function (json) {
-         _this1.data = json;
-       });
+       if (topic == 'customers') {
+         this.customers = lines;
+       } else if (topic == 'reports') {
+         this.reports = lines;
+       } else {
+         console.log('topic not supported: ', topic);
+       }
      },
 
      // set up listener for incoming messages from SW
      ready: function() {
        _this1 = this;
        navigator.serviceWorker.addEventListener('message', function(event) {
-         console.log('new msg', event);
          var data = event.data.message,
              topic = event.data.topic;
 
-         // JSON data starts with a bracket
-         if (data.match(/^{/)) {
-           _this.appData[topic] = data;
-           _this1.data = data;
+         // console.log('reports: ', topic, data);
+         if (topic == 'offices') {
+           _this1.offices = JSON.parse(data);
          } else {
-           _this2._parseCSV(data, topic);
+           _this1._parseCSV(topic, data);
          }
        });
      }
-
-     /* _fetchData: function(fileName) {
-        var csvReg = /\.csv$/i,
-        jsonReg = /\.json$/i,
-        _this2 = this;
-
-        fetch (fileName).then(function (resp) {
-
-        switch (true) {
-        case csvReg.test(fileName):
-        _this2._parseCSV(resp);
-        break;
-
-        case jsonReg.test(fileName):
-        _this2._parseJSON(resp);
-        break;
-
-        default:
-        console.log("file format for " + fileName + " not supported");
-        }
-        }, function (e) {
-        console.log("file fetching error ", e);
-        });
-        } */
 
    });
   </script>

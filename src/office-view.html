@@ -49,7 +49,7 @@
       </google-map>
     </div>
 
-    <report-data data="{{officeData}}" file-name="{{dataFile}}"></report-data>
+    <report-data offices="{{officeData}}"></report-data>
 
   </template>
 
@@ -60,21 +60,7 @@
       is: 'office-view',
 
       properties: {
-        officeData: Array,
-
-        dataFile: {
-          type: String,
-          value: "/data/offices-1.json"
-        }
-      },
-
-      // TODO: should abstract the file reloading into a behavior
-      ready: function() {
-        var _this1 = this;
-        window.setInterval(function() {
-          var files = ["/data/offices-1.json", "/data/offices-2.json"];
-          _this1.dataFile == files[0] ? _this1.dataFile = files[1] : _this1.dataFile = files[0];
-        }, 5000);
+        officeData: Array
       }
     });
 

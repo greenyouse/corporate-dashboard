@@ -148,8 +148,7 @@
     </div>
 
     <!-- load the report data -->
-    <report-data lines="{{reports}}"></report-data>
-    <report-data lines="{{customers}}"></report-data>
+    <report-data reports="{{reports}}" customers="{{customers}}"></report-data>
 
   </template>
 
@@ -229,14 +228,7 @@
        'setColOpts(startDate, endDate)'
      ],
 
-     ready: function() {
-       console.log('reports', reports[0]);
-       console.log('customers', customers[0]);
-     },
-
      _isLoaded: function(reports, customers) {
-       console.log('reports', reports[0]);
-       console.log('customers', customers[0]);
        if (Array.isArray(customers) && Array.isArray(reports))
          this.dataLoaded = true;
      },

@@ -223,7 +223,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </table>
     </section>
 
-    <report-data headers="{{headers}}" lines="{{reports}}" file-name="{{dataFile}}"></report-data>
+    <report-data headers="{{headers}}" reports="{{reports}}"></report-data>
 
   </template>
 
@@ -281,12 +281,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
-        showFilters: Boolean,
-
-        dataFile: {
-          type: String,
-          value: "/data/reports-1.csv"
-        }
+        showFilters: Boolean
       },
 
       listeners: {
@@ -299,17 +294,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_showFilters(filters)',
         '_updateTable(reports)'
       ],
-
-      /**
-       * Load new data every 5 seconds
-       */
-      ready: function() {
-        var _this1 = this;
-        window.setInterval(function() {
-          var files = ["/data/reports-1.csv", "/data/reports-2.csv"];
-          _this1.dataFile == files[0] ? _this1.dataFile = files[1] : _this1.dataFile = files[0];
-        }, 5000);
-      },
 
       /**
        * Preserves the sort and filter options after new data is loaded

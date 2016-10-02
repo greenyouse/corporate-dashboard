@@ -24,7 +24,7 @@ webPush.setGCMAPIKey(serverKey.substr(0, serverKey.length - 2));
 var subscribers = new Set(),
     datasets = {},
     sendDataInterval = 3000, // send data every 10 seconds
-    page = 'reports';
+    page = 'key-metrics';
 
 var app = express();
 app.set('port', 7000);
@@ -75,7 +75,7 @@ app.delete('/subscription', function(req, res) {
 
   req.on('end', function() {
     var subscription = JSON.parse(body);
-    //console.log('Removing Subscription: ', subscription.endpoint);
+    console.log('Removing Subscription: ', subscription.endpoint);
 
     // delete the subscriber
     subscribers.delete(subscription);
@@ -92,26 +92,21 @@ app.post('/page', function(req, res) {
   });
 
   req.on('end', function() {
-    var newPage = body;
+    page = body;
 
-    // set the new page
-    newPage.match(/key/) ? page = 'customers' :
-      newPage.match(/data/) ? page = 'reports' :
-      page = 'offices';
-
-    // console.log('page', newPage, page);
+    console.log('page', page);
     writeCors(200, res);
   });
 });
 
 // Sends a notification message to some subscribers
-function sendNotifications(message) {
+function sendNotifications(topic, message) {
   var subscriptions = Array.from(subscribers);
 
   console.log('sending notifications');
   if (subscriptions.length == 0) return;
 
-  var payload = JSON.stringify({"message": message });
+  var payload = JSON.stringify({ "topic": topic, "message": message});
   // console.log('payload', payload);
 
   for (var i = 0; i < subscriptions.length; i++) {
@@ -133,10 +128,29 @@ function sendNotifications(message) {
 function pulseData () {
   var i = 1;
   setInterval(() => {
-    var key = page + '-' + i,
-        data = datasets[key];
+    var key;
 
-    sendNotifications(data);
+    // set the key for the current page
+    page.match(/key/) ? key = 'customers-' + i :
+      page.match(/data/) ? key = 'reports-' + i :
+      key = 'offices-' + i;
+
+    var data = datasets[key];
+
+    if (page.match(/data/)) {
+
+      sendNotifications('reports', data);
+
+    } else if (page.match(/office/)) {
+
+      sendNotifications('offices', data);
+
+    } else if (page.match(/key/)) {
+
+      sendNotifications('customers', data);
+      var dataset2 = datasets['reports-' + i];
+      sendNotifications('reports', dataset2);
+    }
 
     // switch to the next dataset
     i == 2 ? i = 1 : i = 2;
