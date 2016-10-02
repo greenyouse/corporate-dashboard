@@ -7,45 +7,39 @@
      is: 'report-data',
 
      properties: {
-       // for csv
-       headers: {
-         type: Array,
-         notify: true
-       },
-
-       lines: {
-         type: Array,
-         notify: true
-       },
-
-       // for json
-       data: {
-         type: Array,
-         notify: true
-       },
-
-       fileName: {
-         type: String
+       appData: {
+         type: Object,
+         notify: true,
+         value: function() {
+           return {
+             offices: [],
+             headers: [],
+             reports: [],
+             customers: [],
+           }
+         }
        }
      },
 
-     observers: [
-       '_fetchData(fileName)'
-     ],
-
-     _parseCSV: function (resp) {
+     /* observers: [
+        '_fetchData(fileName)'
+        ],
+      */
+     _parseCSV: function (resp, topic) {
        var _this1 = this;
 
        resp.text().then(function (csv) {
          var rows = csv.split("\n");
          // last row is a "" line, removing it here
-         rows.splice(-1)
+         rows.splice(-1);
 
-         _this1.headers = rows.splice(0,1)[0].split(",");
+         _this1.appData.headers = rows.splice(0,1)[0].split(",");
 
-         _this1.lines = rows.map(function (row) {
+         var lines = rows.map(function (row) {
            return row.split(",");
          });
+
+         _this1.appData[topic] = lines;
        });
      },
 
@@ -57,29 +51,47 @@
        });
      },
 
-     _fetchData: function(fileName) {
-       var csvReg = /\.csv$/i,
-           jsonReg = /\.json$/i,
-           _this2 = this;
+     // set up listener for incoming messages from SW
+     ready: function() {
+       _this1 = this;
+       navigator.serviceWorker.addEventListener('message', function(event) {
+         console.log('new msg', event);
+         var data = event.data.message,
+             topic = event.data.topic;
 
-       fetch (fileName).then(function (resp) {
-
-         switch (true) {
-           case csvReg.test(fileName):
-             _this2._parseCSV(resp);
-             break;
-
-           case jsonReg.test(fileName):
-             _this2._parseJSON(resp);
-             break;
-
-           default:
-             console.log("file format for " + fileName + " not supported");
+         // JSON data starts with a bracket
+         if (data.match(/^{/)) {
+           _this.appData[topic] = data;
+           _this1.data = data;
+         } else {
+           _this2._parseCSV(data, topic);
          }
-       }, function (e) {
-         console.log("file fetching error ", e);
        });
      }
+
+     /* _fetchData: function(fileName) {
+        var csvReg = /\.csv$/i,
+        jsonReg = /\.json$/i,
+        _this2 = this;
+
+        fetch (fileName).then(function (resp) {
+
+        switch (true) {
+        case csvReg.test(fileName):
+        _this2._parseCSV(resp);
+        break;
+
+        case jsonReg.test(fileName):
+        _this2._parseJSON(resp);
+        break;
+
+        default:
+        console.log("file format for " + fileName + " not supported");
+        }
+        }, function (e) {
+        console.log("file fetching error ", e);
+        });
+        } */
 
    });
   </script>

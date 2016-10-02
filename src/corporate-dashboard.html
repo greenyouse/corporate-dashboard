@@ -8,6 +8,7 @@
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
@@ -106,6 +107,7 @@
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div title>Corportate Dashboard</div>
+            <paper-toggle-button id="pushButton"></paper-toggle-button>
           </app-toolbar>
         </app-header>
 
@@ -141,7 +143,21 @@
         metricsActive: {
           type: Boolean,
           notify: true
+        },
+
+        pushEnabled: {
+          type: Boolean,
+          value: false
+        },
+
+        serverLocation: {
+          type: String,
+          value: 'http://localhost:7000'
         }
+      },
+
+      listeners: {
+        'pushButton.tap': 'toggleSubscription'
       },
 
       observers: [
@@ -156,6 +172,177 @@
         // load page import on demand.
         this.importHref(
           this.resolveUrl(page + '.html'), null, null, true);
+        // send an update to the server
+        fetch(this.serverLocation + '/page', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: page
+        });
+      },
+
+      toggleSubscription: function() {
+        this.pushEnabled ? this.unsubscribe() : this.subscribe();
+      },
+
+      // parts used from: https://developers.google.com/web/updates/2015/03/push-notifications-on-the-open-web
+      // Once the service worker is registered set the initial state
+      ready: function() {
+        // Are Notifications supported in the service worker?
+        if (!('showNotification' in ServiceWorkerRegistration.prototype)) {
+          console.warn('Notifications aren\'t supported.');
+          return;
+        }
+
+        // Check the current Notification permission.
+        // If its denied, it's a permanent block until the
+        // user changes the permission
+        if (Notification.permission === 'denied') {
+          console.warn('The user has blocked notifications.');
+          return;
+        }
+
+        // Check if push messaging is supported
+        if (!('PushManager' in window)) {
+          console.warn('Push messaging isn\'t supported.');
+          return;
+        }
+
+        this_1 = this;
+        // We need the service worker registration to check for a subscription
+        navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+          // Do we already have a push message subscription?
+          this_2 = this_1;
+          serviceWorkerRegistration.pushManager.getSubscription()
+                                   .then(function(subscription) {
+                                     // Enable any UI which subscribes / unsubscribes from
+                                     // push messages.
+                                     var pushButton = this_2.$.pushButton;
+
+                                     if (!subscription)  {
+                                       pushButton.textContent = 'Load Dashboard Data'
+                                     } else {
+                                       // Keep your server in sync with the latest subscriptionId
+                                       this_2.toggleServerSubscription(subscription, "subscribe");
+                                     }
+                                   })
+                                   .catch(function(err) {
+                                     console.warn('Error during getSubscription()', err);
+                                   });
+        });
+      },
+
+      subscribe: function() {
+        var pushButton = this.$.pushButton;
+
+        this_1 = this;
+        navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+          this_2 = this_1;
+          serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
+                                   .then(function(subscription) {
+                                     // sends the subscription back to the server so the
+                                     // client is registered
+                                     return this_2.toggleServerSubscription(subscription, "subscribe");
+                                   })
+                                   .catch(function(e) {
+                                     if (Notification.permission === 'denied') {
+                                       // The user denied the notification permission which
+                                       // means we failed to subscribe and the user will need
+                                       // to manually change the notification permission to
+                                       // subscribe to push messages
+                                       console.warn('Permission for Notifications was denied');
+                                     } else {
+                                       // A problem occurred with the subscription; common reasons
+                                       // include network errors, and lacking gcm_sender_id and/or
+                                       // gcm_user_visible_only in the manifest.
+                                       console.error('Unable to subscribe to push.', e);
+                                       pushButton.textContent = 'Load Dashboard Data';
+                                     }
+                                   });
+        });
+      },
+
+      unsubscribe: function() {
+        var pushButton = this.$.pushButton;
+
+        this_1 = this;
+        navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+
+          this_2 = this_1;
+          serviceWorkerRegistration.pushManager.getSubscription().then(
+            function(subscription) {
+              var subscriptionId = subscription.subscriptionId;
+              // remove the client's subscription from the server
+              this_2.toggleServerSubscription(subscription, "unsubscribe");
+
+              var pushButton = this_2.$.pushButton;
+              // We have a subscription, so call unsubscribe on it
+              subscription.unsubscribe().then(function(successful) {
+                pushButton.textContent = 'Load Dashboard Data';
+                isPushEnabled = false;
+              }).catch(function(e) {
+
+                console.log('Unsubscription error: ', e);
+                pushButton.textContent = 'Disable Push Messages';
+              });
+            }).catch(function(e) {
+              console.error('Error thrown while unsubscribing from push messaging.', e);
+            });
+        });
+      },
+
+      normalizeMessage: function(subscription) {
+        var chromeRegex = /https:\/\/android.googleapis.com\/gcm\/send\//,
+            endpoint = subscription.endpoint,
+            key = subscription.keys.p256dh,
+            auth = subscription.keys.auth;
+
+        return {
+          endpoint: endpoint,
+          key: key,
+          auth: auth
+        }
+      },
+
+      toggleServerSubscription: function(subscription, action) {
+        var pushButton = this.$.pushButton,
+            msg = this.normalizeMessage(subscription.toJSON());
+
+        msg = JSON.stringify(msg);
+
+        var headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        if (action == 'subscribe') {
+          this_2.pushEnabled = true;
+          pushButton.checked = true;
+          pushButton.textContent = 'Disable Push Messages';
+
+          // subscribe to the server's push messages
+          var url = new Request(this.serverLocation + '/subscription');
+          fetch(url, {
+            method: 'PUT',
+            headers: headers,
+            body: msg
+          }).catch(function(error) {
+            console.error("Error subscribing to server", error);
+          });
+        } else if(action == 'unsubscribe') {
+          this_2.pushEnabled = false;
+          pushButton.checked = false;
+          pushButton.textContent = 'Load Dashboard Data';
+
+          // unsubscribe from push
+          var url = new Request(this.serverLocation + '/subscription');
+          fetch(url, {
+            method: 'DELETE',
+            headers: headers,
+            body: msg
+          }).catch(function(error) {
+            console.error("Error unsubscribing from server", error);
+          });
+        }
       }
 
     });

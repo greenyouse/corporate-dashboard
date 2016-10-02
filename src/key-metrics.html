@@ -148,8 +148,8 @@
     </div>
 
     <!-- load the report data -->
-    <report-data lines="{{reports}}" file-name="{{reportFile}}"></report-data>
-    <report-data lines="{{customers}}" file-name="{{custFile}}"></report-data>
+    <report-data lines="{{reports}}"></report-data>
+    <report-data lines="{{customers}}"></report-data>
 
   </template>
 
@@ -217,16 +217,6 @@
        active: {
          type: Boolean,
          observer: "_resizeCharts"
-       },
-
-       reportFile: {
-         type: String,
-         value: "/data/reports-1.csv"
-       },
-
-       custFile: {
-         type: String,
-         value: "/data/customers-2.csv"
        }
      },
 
@@ -239,20 +229,14 @@
        'setColOpts(startDate, endDate)'
      ],
 
-      /**
-       * Load new data every 5 seconds
-       */
-      ready: function() {
-        var _this1 = this;
-        window.setInterval(function() {
-          var rFiles = ["/data/reports-1.csv", "/data/reports-2.csv"],
-              custFiles = ["/data/customers-1.csv", "/data/customers-2.csv"];
-          _this1.reportFile == rFiles[0] ? _this1.reportFile = rFiles[1] : _this1.reportFile = rFiles[0];
-          _this1.custFile == custFiles[0] ? _this1.custFile = custFiles[1] : _this1.custFile = custFiles[0];
-        }, 5000);
-      },
+     ready: function() {
+       console.log('reports', reports[0]);
+       console.log('customers', customers[0]);
+     },
 
      _isLoaded: function(reports, customers) {
+       console.log('reports', reports[0]);
+       console.log('customers', customers[0]);
        if (Array.isArray(customers) && Array.isArray(reports))
          this.dataLoaded = true;
      },

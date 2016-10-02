@@ -1,0 +1,27 @@
+{
+  "name": "corporate-dashboard",
+  "version": "1.0.0",
+  "description": "backend for the dashboard",
+  "main": "server.js",
+  "dependencies": {
+    "chokidar": "^1.6.0",
+    "express": "^4.13.4",
+    "glob": "^7.0.6",
+    "serve-static": "^1.10.2",
+    "web-push": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "serve": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greenyouse/corporate-dashboard.git"
+  },
+  "author": "Ed Babcock",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/greenyouse/corporate-dashboard/issues"
+  },
+  "homepage": "https://github.com/greenyouse/corporate-dashboard#readme"
+}
