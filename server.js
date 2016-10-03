@@ -13,11 +13,6 @@ const chokidar = require('chokidar'),
 var serverKey = 'AIzaSyCVvDqihS3BhFEE2IWA0npeUH94keFDcOUx9';
 webPush.setGCMAPIKey(serverKey.substr(0, serverKey.length - 2));
 
-// var options = {
-//   pfx: fs.readFileSync('aa34f6b8-f1c5-4e32-afd7-7a5f9f0b659c.pfx'),
-//   passphrase: 'password'
-// };
-
 
 // just using in-memory storage here (would do encryption + a database for
 // real prod)
