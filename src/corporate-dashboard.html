@@ -413,17 +413,38 @@
        * set up listener for incoming messages from the SW
        */
       attached: function() {
-        _this1 = this;
-        navigator.serviceWorker.addEventListener('message', function(event) {
+        const this1 = this;
+
+        navigator.serviceWorker.addEventListener('message', function (event) {
           var data = event.data.message,
               topic = event.data.topic;
 
           // console.log('reports: ', topic, data);
           if (topic == 'offices') {
-            _this1.offices = JSON.parse(data);
+            this1.offices = JSON.parse(data);
           } else {
-            _this1._parseCSV(topic, data);
+            this1._parseCSV(topic, data);
           }
+        });
+
+        // load some initial data for each page so displays aren't blank
+        fetch('/data/customers-1.csv').then(function(resp) {
+          const this2 = this1;
+          resp.text().then(function(csv) {
+            this2._parseCSV('customers', csv);
+          });
+        });
+        fetch('/data/reports-1.csv').then(function(resp) {
+          const this2 = this1;
+          resp.text().then(function(csv) {
+            this2._parseCSV('reports', csv);
+          })
+        });
+        fetch('/data/offices-1.json').then(function(resp) {
+          const this2 = this1;
+          resp.json().then(function(json) {
+            this2.offices = json;
+          })
         });
       }
 
