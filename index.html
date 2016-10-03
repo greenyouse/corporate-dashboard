@@ -49,13 +49,12 @@
      // load pre-caching service worker
      if ('serviceWorker' in navigator) {
        window.addEventListener('load', function() {
-         /* navigator.serviceWorker.register('/sw.js'); <- for development */
+         /* navigator.serviceWorker.register('/sw.js'); */
          navigator.serviceWorker.register('/service-worker.js');
        });
      }
     </script>
 
-    <!-- <link rel="import" href="/bower_components/polymerfire/firebase-app.html"> -->
     <link rel="import" href="/src/corporate-dashboard.html">
 
     <style>
@@ -73,14 +72,6 @@
     <script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script>
   </head>
   <body>
-
-    <!-- register the app with firebase -->
-    <!-- <firebase-app
-         auth-domain="udacity-dashboard-83248.firebaseapp.com"
-         name="corporate-dashboard"
-         api-key="AIzaSyCmftPFcdseFKQyhppR1tFtEAt6OcIAww0"
-         database-url="https://udacity-dashboard-83248.firebaseio.com">
-         </firebase-app> -->
 
     <corporate-dashboard></corporate-dashboard>
 

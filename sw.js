@@ -1,229 +1,174 @@
-'use strict';
+// cache busting is done by upgrading the cache version
+var staticCache = 'corporate-dashboard-v1',
+    CURRENT_CACHES = [
+      staticCache,
+    ];
 
+var staticPrecache = [
+  '/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html',
+  '/bower_components/app-layout/app-drawer/app-drawer.html',
+  '/bower_components/app-layout/app-header-layout/app-header-layout.html',
+  '/bower_components/app-layout/app-header/app-header.html',
+  '/bower_components/app-layout/app-scroll-effects/app-scroll-effects-behavior.html',
+  '/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/blend-background.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/fade-background.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/material.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/parallax-background.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/resize-snapped-title.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/resize-title.html',
+  '/bower_components/app-layout/app-scroll-effects/effects/waterfall.html',
+  '/bower_components/app-layout/app-toolbar/app-toolbar.html',
+  '/bower_components/app-layout/helpers/helpers.html',
+  '/bower_components/app-route/app-location.html',
+  '/bower_components/app-route/app-route-converter-behavior.html',
+  '/bower_components/app-route/app-route.html',
+  '/bower_components/font-roboto/roboto.html',
+  '/bower_components/google-apis/google-maps-api.html',
+  '/bower_components/google-chart/charts-loader.html',
+  '/bower_components/google-chart/google-chart-loader.html',
+  '/bower_components/google-chart/google-chart.css',
+  '/bower_components/google-chart/google-chart.html',
+  '/bower_components/iron-a11y-announcer/iron-a11y-announcer.html',
+  '/bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html',
+  '/bower_components/iron-a11y-keys/iron-a11y-keys.html',
+  '/bower_components/iron-ajax/iron-request.html',
+  '/bower_components/iron-behaviors/iron-button-state.html',
+  '/bower_components/iron-behaviors/iron-control-state.html',
+  '/bower_components/iron-checked-element-behavior/iron-checked-element-behavior.html',
+  '/bower_components/iron-dropdown/iron-dropdown-scroll-manager.html',
+  '/bower_components/iron-dropdown/iron-dropdown.html',
+  '/bower_components/iron-fit-behavior/iron-fit-behavior.html',
+  '/bower_components/iron-flex-layout/iron-flex-layout-classes.html',
+  '/bower_components/iron-flex-layout/iron-flex-layout.html',
+  '/bower_components/iron-form-element-behavior/iron-form-element-behavior.html',
+  '/bower_components/iron-icon/iron-icon.html',
+  '/bower_components/iron-icons/social-icons.html',
+  '/bower_components/iron-iconset-svg/iron-iconset-svg.html',
+  '/bower_components/iron-input/iron-input.html',
+  '/bower_components/iron-jsonp-library/iron-jsonp-library.html',
+  '/bower_components/iron-location/iron-location.html',
+  '/bower_components/iron-location/iron-query-params.html',
+  '/bower_components/iron-media-query/iron-media-query.html',
+  '/bower_components/iron-menu-behavior/iron-menu-behavior.html',
+  '/bower_components/iron-meta/iron-meta.html',
+  '/bower_components/iron-overlay-behavior/iron-overlay-backdrop.html',
+  '/bower_components/iron-overlay-behavior/iron-overlay-behavior.html',
+  '/bower_components/iron-overlay-behavior/iron-overlay-manager.html',
+  '/bower_components/iron-pages/iron-pages.html',
+  '/bower_components/iron-resizable-behavior/iron-resizable-behavior.html',
+  '/bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html',
+  '/bower_components/iron-selector/iron-multi-selectable.html',
+  '/bower_components/iron-selector/iron-selectable.html',
+  '/bower_components/iron-selector/iron-selection.html',
+  '/bower_components/iron-selector/iron-selector.html',
+  '/bower_components/iron-validatable-behavior/iron-validatable-behavior.html',
+  '/bower_components/neon-animation/animations/fade-in-animation.html',
+  '/bower_components/neon-animation/animations/fade-out-animation.html',
+  '/bower_components/neon-animation/animations/opaque-animation.html',
+  '/bower_components/neon-animation/neon-animatable-behavior.html',
+  '/bower_components/neon-animation/neon-animation-behavior.html',
+  '/bower_components/neon-animation/neon-animation-runner-behavior.html',
+  '/bower_components/neon-animation/web-animations.html',
+  '/bower_components/paper-behaviors/paper-button-behavior.html',
+  '/bower_components/paper-behaviors/paper-checked-element-behavior.html',
+  '/bower_components/paper-behaviors/paper-inky-focus-behavior.html',
+  '/bower_components/paper-behaviors/paper-ripple-behavior.html',
+  '/bower_components/paper-button/paper-button.html',
+  '/bower_components/paper-dropdown-menu/paper-dropdown-menu-icons.html',
+  '/bower_components/paper-dropdown-menu/paper-dropdown-menu-shared-styles.html',
+  '/bower_components/paper-dropdown-menu/paper-dropdown-menu.html',
+  '/bower_components/paper-icon-button/paper-icon-button.html',
+  '/bower_components/paper-input/paper-input-addon-behavior.html',
+  '/bower_components/paper-input/paper-input-behavior.html',
+  '/bower_components/paper-input/paper-input-char-counter.html',
+  '/bower_components/paper-input/paper-input-container.html',
+  '/bower_components/paper-input/paper-input-error.html',
+  '/bower_components/paper-input/paper-input.html',
+  '/bower_components/paper-item/paper-item-behavior.html',
+  '/bower_components/paper-item/paper-item-shared-styles.html',
+  '/bower_components/paper-item/paper-item.html',
+  '/bower_components/paper-listbox/paper-listbox.html',
+  '/bower_components/paper-material/paper-material-shared-styles.html',
+  '/bower_components/paper-menu-button/paper-menu-button-animations.html',
+  '/bower_components/paper-menu-button/paper-menu-button.html',
+  '/bower_components/paper-ripple/paper-ripple.html',
+  '/bower_components/paper-spinner/paper-spinner-behavior.html',
+  '/bower_components/paper-spinner/paper-spinner-styles.html',
+  '/bower_components/paper-spinner/paper-spinner.html',
+  '/bower_components/paper-styles/color.html',
+  '/bower_components/paper-styles/default-theme.html',
+  '/bower_components/paper-styles/shadow.html',
+  '/bower_components/paper-styles/typography.html',
+  '/bower_components/paper-toggle-button/paper-toggle-button.html',
+  '/bower_components/polymer/polymer-micro.html',
+  '/bower_components/polymer/polymer-mini.html',
+  '/bower_components/polymer/polymer.html',
+  '/bower_components/promise-polyfill/Promise.js',
+  '/bower_components/promise-polyfill/promise-polyfill-lite.html',
+  '/bower_components/web-animations-js/web-animations-next-lite.min.js',
+  '/bower_components/webcomponentsjs/webcomponents-lite.min.js',
+  '/index.html',
+  '/manifest.json',
+  '/src/corporate-dashboard.html',
+  '/src/data-view.html',
+  '/src/key-metrics.html',
+  '/src/my-icons.html',
+  '/src/office-view.htm',
+  '/src/google-map/google-map-marker.html',
+  '/src/google-map/google-map.html'
+];
 
-
-/* eslint-disable quotes, comma-spacing */
-var PrecacheConfig = [];
-/* eslint-enable quotes, comma-spacing */
-var CacheNamePrefix = 'sw-precache-v1--' + (self.registration ? self.registration.scope : '') + '-';
-
-
-var IgnoreUrlParametersMatching = [/^utm_/];
-
-
-
-var addDirectoryIndex = function (originalUrl, index) {
-    var url = new URL(originalUrl);
-    if (url.pathname.slice(-1) === '/') {
-      url.pathname += index;
-    }
-    return url.toString();
-  };
-
-var getCacheBustedUrl = function (url, param) {
-    param = param || Date.now();
-
-    var urlWithCacheBusting = new URL(url);
-    urlWithCacheBusting.search += (urlWithCacheBusting.search ? '&' : '') +
-      'sw-precache=' + param;
-
-    return urlWithCacheBusting.toString();
-  };
-
-var isPathWhitelisted = function (whitelist, absoluteUrlString) {
-    // If the whitelist is empty, then consider all URLs to be whitelisted.
-    if (whitelist.length === 0) {
-      return true;
-    }
-
-    // Otherwise compare each path regex to the path of the URL passed in.
-    var path = (new URL(absoluteUrlString)).pathname;
-    return whitelist.some(function(whitelistedPathRegex) {
-      return path.match(whitelistedPathRegex);
-    });
-  };
-
-var populateCurrentCacheNames = function (precacheConfig,
-    cacheNamePrefix, baseUrl) {
-    var absoluteUrlToCacheName = {};
-    var currentCacheNamesToAbsoluteUrl = {};
-
-    precacheConfig.forEach(function(cacheOption) {
-      var absoluteUrl = new URL(cacheOption[0], baseUrl).toString();
-      var cacheName = cacheNamePrefix + absoluteUrl + '-' + cacheOption[1];
-      currentCacheNamesToAbsoluteUrl[cacheName] = absoluteUrl;
-      absoluteUrlToCacheName[absoluteUrl] = cacheName;
-    });
-
-    return {
-      absoluteUrlToCacheName: absoluteUrlToCacheName,
-      currentCacheNamesToAbsoluteUrl: currentCacheNamesToAbsoluteUrl
-    };
-  };
-
-var stripIgnoredUrlParameters = function (originalUrl,
-    ignoreUrlParametersMatching) {
-    var url = new URL(originalUrl);
-
-    url.search = url.search.slice(1) // Exclude initial '?'
-      .split('&') // Split into an array of 'key=value' strings
-      .map(function(kv) {
-        return kv.split('='); // Split each 'key=value' string into a [key, value] array
-      })
-      .filter(function(kv) {
-        return ignoreUrlParametersMatching.every(function(ignoredRegex) {
-          return !ignoredRegex.test(kv[0]); // Return true iff the key doesn't match any of the regexes.
-        });
-      })
-      .map(function(kv) {
-        return kv.join('='); // Join each [key, value] array into a 'key=value' string
-      })
-      .join('&'); // Join the array of 'key=value' strings into a string with '&' in between each
-
-    return url.toString();
-  };
-
-
-var mappings = populateCurrentCacheNames(PrecacheConfig, CacheNamePrefix, self.location);
-var AbsoluteUrlToCacheName = mappings.absoluteUrlToCacheName;
-var CurrentCacheNamesToAbsoluteUrl = mappings.currentCacheNamesToAbsoluteUrl;
-
-function deleteAllCaches() {
-  return caches.keys().then(function(cacheNames) {
-    return Promise.all(
-      cacheNames.map(function(cacheName) {
-        return caches.delete(cacheName);
-      })
-    );
-  });
-}
-
-self.addEventListener('install', function(event) {
+self.oninstall = function(event) {
   event.waitUntil(
-    // Take a look at each of the cache names we expect for this version.
-    Promise.all(Object.keys(CurrentCacheNamesToAbsoluteUrl).map(function(cacheName) {
-      return caches.open(cacheName).then(function(cache) {
-        // Get a list of all the entries in the specific named cache.
-        // For caches that are already populated for a given version of a
-        // resource, there should be 1 entry.
-        return cache.keys().then(function(keys) {
-          // If there are 0 entries, either because this is a brand new version
-          // of a resource or because the install step was interrupted the
-          // last time it ran, then we need to populate the cache.
-          if (keys.length === 0) {
-            // Use the last bit of the cache name, which contains the hash,
-            // as the cache-busting parameter.
-            // See https://github.com/GoogleChrome/sw-precache/issues/100
-            var cacheBustParam = cacheName.split('-').pop();
-            var urlWithCacheBusting = getCacheBustedUrl(
-              CurrentCacheNamesToAbsoluteUrl[cacheName], cacheBustParam);
-
-            var request = new Request(urlWithCacheBusting,
-              {credentials: 'same-origin'});
-            return fetch(request).then(function(response) {
-              if (response.ok) {
-                return cache.put(CurrentCacheNamesToAbsoluteUrl[cacheName],
-                  response);
-              }
-
-              console.error('Request for %s returned a response status %d, ' +
-                'so not attempting to cache it.',
-                urlWithCacheBusting, response.status);
-              // Get rid of the empty cache if we can't add a successful response to it.
-              return caches.delete(cacheName);
-            });
-          }
-        });
-      });
-    })).then(function() {
-      return caches.keys().then(function(allCacheNames) {
-        return Promise.all(allCacheNames.filter(function(cacheName) {
-          return cacheName.indexOf(CacheNamePrefix) === 0 &&
-            !(cacheName in CurrentCacheNamesToAbsoluteUrl);
-          }).map(function(cacheName) {
-            return caches.delete(cacheName);
-          })
-        );
-      });
+    caches.open(staticCache).then(function(cache) {
+      return cache.addAll(staticPrecache);
     }).then(function() {
-      if (typeof self.skipWaiting === 'function') {
-        // Force the SW to transition from installing -> active state
-        self.skipWaiting();
-      }
+      return self.skipWaiting();
     })
   );
-});
+};
 
-self.addEventListener('activate', function(event) {
-  event.waitUntil(self.clients.claim());
-});
+self.onactivate = function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+          // apps usually have a prefixed cache name
+          if (CURRENT_CACHES.includes(cacheName)) {
+            return cacheName;
+          } else {
+            return caches.delete(cacheName);
+          }})
+      ).then(function() {
+        self.clients.claim();
+      }).catch(function(err) {
+        console.error(err);
+      });
+    })
+  );
+};
 
-self.addEventListener('message', function(event) {
-  if (event.data.command === 'delete_all') {
-    console.log('About to delete all caches...');
-    deleteAllCaches().then(function() {
-      console.log('Caches deleted.');
-      event.ports[0].postMessage({
-        error: null
+// send the data back to the client so it's loaded into graphs
+function loadData(topic, data) {
+  self.clients.matchAll().then(function(clients) {
+    if (clients.length == 0) {
+      console.error('No window clients detected');
+      return;
+    }
+
+    clients.map(function(client) {
+      var id = client.id;
+
+      client.postMessage({
+        client: id,
+        message: data,
+        topic: topic
       });
-    }).catch(function(error) {
-      console.log('Caches not deleted:', error);
-      event.ports[0].postMessage({
-        error: error
-      });
+
     });
-  }
-});
-
-
-self.addEventListener('fetch', function(event) {
-  if (event.request.method === 'GET') {
-    var urlWithoutIgnoredParameters = stripIgnoredUrlParameters(event.request.url,
-      IgnoreUrlParametersMatching);
-
-    var cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
-    var directoryIndex = 'index.html';
-    if (!cacheName && directoryIndex) {
-      urlWithoutIgnoredParameters = addDirectoryIndex(urlWithoutIgnoredParameters, directoryIndex);
-      cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
-    }
-
-    var navigateFallback = '/index.html';
-    // Ideally, this would check for event.request.mode === 'navigate', but that is not widely
-    // supported yet:
-    // https://code.google.com/p/chromium/issues/detail?id=540967
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1209081
-    if (!cacheName && navigateFallback && event.request.headers.has('accept') &&
-        event.request.headers.get('accept').includes('text/html') &&
-        /* eslint-disable quotes, comma-spacing */
-        isPathWhitelisted([], event.request.url)) {
-        /* eslint-enable quotes, comma-spacing */
-      var navigateFallbackUrl = new URL(navigateFallback, self.location);
-      cacheName = AbsoluteUrlToCacheName[navigateFallbackUrl.toString()];
-    }
-
-    if (cacheName) {
-      event.respondWith(
-        // Rely on the fact that each cache we manage should only have one entry, and return that.
-        caches.open(cacheName).then(function(cache) {
-          return cache.keys().then(function(keys) {
-            return cache.match(keys[0]).then(function(response) {
-              if (response) {
-                return response;
-              }
-              // If for some reason the response was deleted from the cache,
-              // raise and exception and fall back to the fetch() triggered in the catch().
-              throw Error('The cache ' + cacheName + ' is empty.');
-            });
-          });
-        }).catch(function(e) {
-          console.warn('Couldn\'t serve response for "%s" from cache: %O', event.request.url, e);
-          return fetch(event.request);
-        })
-      );
-    }
-  }
-});
+  });
+}
 
 self.addEventListener('push', function(event) {
   var title = 'New Data',
@@ -241,24 +186,3 @@ self.addEventListener('push', function(event) {
   //     icon: 'images/app-icon-32.png'
   //   }));
 });
-
-// send the data back to the client so it's loaded into graphs
-var loadData = function (topic, data) {
-  self.clients.matchAll().then(function (clients) {
-    if (clients.length == 0) {
-      console.error('No window clients detected');
-      return;
-    }
-
-    clients.map(function(client) {
-      var id = client.id;
-
-      client.postMessage({
-        client: id,
-        message: data,
-        topic: topic
-      });
-
-    });
-  });
-};
