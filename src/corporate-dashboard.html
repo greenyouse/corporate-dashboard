@@ -69,6 +69,10 @@
          float: right;
      }
 
+     #pushButton {
+         margin-left: 2em;
+         margin-bottom: 1em;
+     }
     </style>
 
     <app-location route="{{route}}"></app-location>
@@ -107,8 +111,8 @@
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div title>Corportate Dashboard</div>
-            <paper-toggle-button id="pushButton"></paper-toggle-button>
           </app-toolbar>
+          <paper-toggle-button id="pushButton"></paper-toggle-button>
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
