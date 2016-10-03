@@ -18,8 +18,6 @@ Here are some of the features it has:
 
 ## Try It Out
 
-The live version is [hosted here](https://udacity-dashboard-83248.firebaseapp.com/).
-
 To run the app locally, first make sure you have polymer-cli:
 
 ```sh
@@ -28,14 +26,15 @@ npm install -g polymer-cli
 
 Then clone and build the app:
 
-```
+```sh
 git clone https://github.com/greenyouse/corporate-dashboard
 cd corporate-dashboard
-polymer build
+./compile.sh
 ```
 
 Finally, serve up the app and view it at [localhost:8080](http://localhost:8080):
 
 ```sh
+node server.js
 polymer serve build/unbundled
 ```
