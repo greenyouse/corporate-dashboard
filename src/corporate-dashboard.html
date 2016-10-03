@@ -116,9 +116,10 @@
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <key-metrics name="key-metrics" active="[[metricsActive]]"></key-metrics>
-          <data-view name="data-view"></data-view>
-          <office-view name="office-view"></office-view>
+          <key-metrics name="key-metrics" active="[[metricsActive]]"
+                       reports="[[reports]]" customers="[[customers]]"></key-metrics>
+          <data-view name="data-view" headers="[[headers]]" reports="[[reports]]"></data-view>
+          <office-view name="office-view" office-data="[[offices]]"></office-view>
         </iron-pages>
 
       </app-header-layout>
@@ -157,6 +158,38 @@
         serverLocation: {
           type: String,
           value: 'http://localhost:7000'
+        },
+
+        offices: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+
+        headers: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+
+        reports: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+
+        customers: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
         }
       },
 
@@ -347,6 +380,51 @@
             console.error("Error unsubscribing from server", error);
           });
         }
+      },
+
+
+      /**
+       * Parse a CSV file into local properties
+       *
+       * @param {string} topic The push msg topic
+       * @param {string} csv Some CSV data to parse
+       */
+      _parseCSV: function (topic, csv) {
+        var rows = csv.split("\n");
+        // last row is a "" line, removing it here
+        rows.splice(-1);
+
+        this.headers = rows.splice(0,1)[0].split(",");
+
+        var lines = rows.map(function (row) {
+          return row.split(",");
+        });
+
+        if (topic == 'customers') {
+          this.customers = lines;
+        } else if (topic == 'reports') {
+          this.reports = lines;
+        } else {
+          console.log('topic not supported: ', topic);
+        }
+      },
+
+      /**
+       * set up listener for incoming messages from the SW
+       */
+      attached: function() {
+        _this1 = this;
+        navigator.serviceWorker.addEventListener('message', function(event) {
+          var data = event.data.message,
+              topic = event.data.topic;
+
+          // console.log('reports: ', topic, data);
+          if (topic == 'offices') {
+            _this1.offices = JSON.parse(data);
+          } else {
+            _this1._parseCSV(topic, data);
+          }
+        });
       }
 
     });
