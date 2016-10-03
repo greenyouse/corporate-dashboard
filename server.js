@@ -51,7 +51,7 @@ app.put('/subscription', function(req, res) {
 
   req.on('end', function() {
     var subscription = JSON.parse(body);
-    console.log('New Subscription: ', subscription.endpoint);
+    // console.log('New Subscription: ', subscription.endpoint);
 
     // save the subscriber
     subscribers.add(subscription);
@@ -70,7 +70,7 @@ app.delete('/subscription', function(req, res) {
 
   req.on('end', function() {
     var subscription = JSON.parse(body);
-    console.log('Removing Subscription: ', subscription.endpoint);
+    // console.log('Removing Subscription: ', subscription.endpoint);
 
     // delete the subscriber
     subscribers.delete(subscription);
@@ -89,7 +89,7 @@ app.post('/page', function(req, res) {
   req.on('end', function() {
     page = body;
 
-    console.log('page', page);
+    // console.log('page', page);
     writeCors(200, res);
   });
 });
@@ -98,7 +98,7 @@ app.post('/page', function(req, res) {
 function sendNotifications(topic, message) {
   var subscriptions = Array.from(subscribers);
 
-  console.log('sending notifications');
+  // console.log('sending notifications');
   if (subscriptions.length == 0) return;
 
   var payload = JSON.stringify({ "topic": topic, "message": message});
@@ -173,7 +173,11 @@ function fetchDatasets() {
 chokidar.watch("data/**/*").on('change', path => {
   fs.readFile(path, 'utf-8', (_, data) => {
     console.log("file changed: ", path);
-    sendNotifications(data);
+    var fileName = path.substr(5),
+        key = fileName.match(/(.+)\.(json|csv)/)[1];
+
+    // reset the data for future push messages
+    datasets[key] = data;
   });
 });
 
