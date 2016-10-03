@@ -1,5 +1,3 @@
-// TODOD: add to service-worker.js after build
-
 'use strict';
 
 
@@ -245,7 +243,7 @@ self.addEventListener('push', function(event) {
 });
 
 // send the data back to the client so it's loaded into graphs
-function loadData(topic, data) {
+var loadData = function (topic, data) {
   self.clients.matchAll().then(function (clients) {
     if (clients.length == 0) {
       console.log('no clients :(');
@@ -263,4 +261,4 @@ function loadData(topic, data) {
 
     });
   });
-}
+};
