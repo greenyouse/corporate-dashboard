@@ -18,7 +18,7 @@ webPush.setGCMAPIKey(serverKey.substr(0, serverKey.length - 2));
 // real prod)
 var subscribers = new Set(),
     datasets = {},
-    sendDataInterval = 3000, // send data every 10 seconds
+    sendDataInterval = 3000,
     page = 'key-metrics';
 
 var app = express();
