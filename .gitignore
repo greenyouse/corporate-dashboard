@@ -3,3 +3,4 @@ dist
 node_modules
 build
 .nrepl-port
+.tern-port
