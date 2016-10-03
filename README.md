@@ -14,7 +14,6 @@ Here are some of the features it has:
 - caches page info with a service workers
 - can be installed to the homescreen on mobile
 - built with responsive design
-- hosted on Firebase
 
 ## Try It Out
 
@@ -29,12 +28,18 @@ Then clone and build the app:
 ```sh
 git clone https://github.com/greenyouse/corporate-dashboard
 cd corporate-dashboard
+bower install
+npm install
 ./compile.sh
 ```
 
-Finally, serve up the app and view it at [localhost:8080](http://localhost:8080):
+Serve up the app and view it at [localhost:8080](http://localhost:8080):
 
 ```sh
-node server.js
+npm run serve
 polymer serve build/unbundled
 ```
+
+Load data by flipping the toggle under the app header (it uses push
+notifications which require user authentication). After a few seconds
+messages should start streaming in and populate the displays.
