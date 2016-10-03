@@ -19,7 +19,7 @@ self.addEventListener('push', function(event) {
 function loadData(topic, data) {
   self.clients.matchAll().then(function (clients) {
     if (clients.length == 0) {
-      console.log('no clients :(');
+      console.error('No window clients detected');
       return;
     }
 
